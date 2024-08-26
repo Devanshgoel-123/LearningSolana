@@ -1,7 +1,7 @@
 import * as web3 from "@solana/web3.js";
 
 const payer = web3.Keypair.fromSecretKey(new Uint8Array([
-    235, 253, 104, 155, 145, 222, 215, 118, 220,  19, 233,
+    235, 253, 104, 155, 145, 222, 215, 118, 220,  19, 233, // make sure of the network you are testing on 
     68, 233, 189, 226, 234,  46, 253,  18,  95, 132, 208,
     73, 137, 250, 118,  43,  92,  69, 189,   8, 236,  66,
     246,  91, 173, 118, 114, 215,  81, 238,  64, 191,  77,
