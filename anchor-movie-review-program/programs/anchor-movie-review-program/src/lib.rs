@@ -1,4 +1,6 @@
 use anchor_lang::{prelude::*, solana_program::pubkey::PUBKEY_BYTES};
+use anchor_spl::associated_token::*;
+use anchor_spl::token::{mint_to, Mint, Token, TokenAccount};
 
 declare_id!("47cBNi7VsX35eEsZquxYjwpsmtQVcrDDiEpNSVKCwExB");
 const MIN_RATING: u8 = 1;
@@ -56,6 +58,10 @@ pub mod anchor_movie_review_program {
         msg!("Movie review for {} deleted", title);
         Ok(())
     }
+    pub fn initialize_token_mint(_ctx: Context<InitializeMint>) -> Result<()> {
+        msg!("Token Mint Initializer");
+        Ok(())
+    }
 }
 
 #[account]
@@ -100,6 +106,21 @@ pub struct AddMovieReview<'info> {
     #[account(mut)]
     pub initializer: Signer<'info>,
     pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token>,
+    #[account(
+        seeds=["mint".as_bytes()],
+        bump,
+        mut
+    )]
+    pub mint: Account<'info, Mint>,
+    #[account(
+        init_if_needed,
+        payer = initializer,
+        associated_token::mint = mint,
+        associated_token::authority = initializer
+    )]
+    pub token_account: Account<'info, TokenAccount>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
 #[derive(Accounts)]
@@ -131,5 +152,22 @@ pub struct DeleteMovieReview<'info> {
     pub movie_review: Account<'info, MovieAccountState>,
     #[account(mut)]
     pub initializer: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+#[derive(Accounts)]
+pub struct InitializeMint<'info> {
+    #[account(
+        init,
+        seeds=["mint".as_bytes()],
+        bump,
+        payer=user,
+        mint::decimals=6,
+        mint::authority=mint,
+    )]
+    pub mint: Account<'info, Mint>,
+    #[account(mut)]
+    pub user: Signer<'info>,
+    pub token_program: Program<'info, Token>,
+    pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
 }
