@@ -37,6 +37,7 @@ pub mod anchor_movie_review_program {
         movie_review.title = title;
         movie_review.rating = rating;
         movie_review.description = description;
+
         Ok(())
     }
     pub fn update_movie_review(
